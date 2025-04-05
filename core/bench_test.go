@@ -33,39 +33,51 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
+// BenchmarkInsertChain_empty_memdb 基准测试插入链条到空的内存数据库
 func BenchmarkInsertChain_empty_memdb(b *testing.B) {
 	benchInsertChain(b, false, nil)
 }
+// BenchmarkInsertChain_empty_diskdb 基准测试插入链条到空的磁盘数据库
 func BenchmarkInsertChain_empty_diskdb(b *testing.B) {
 	benchInsertChain(b, true, nil)
 }
+// BenchmarkInsertChain_valueTx_memdb 基准测试插入带有交易的链条到内存数据库
 func BenchmarkInsertChain_valueTx_memdb(b *testing.B) {
 	benchInsertChain(b, false, genValueTx(0))
 }
+// BenchmarkInsertChain_valueTx_diskdb 基准测试插入带有交易的链条到磁盘数据库
 func BenchmarkInsertChain_valueTx_diskdb(b *testing.B) {
 	benchInsertChain(b, true, genValueTx(0))
 }
+// BenchmarkInsertChain_valueTx_100kB_memdb 基准测试插入带有100kB交易的链条到内存数据库
 func BenchmarkInsertChain_valueTx_100kB_memdb(b *testing.B) {
 	benchInsertChain(b, false, genValueTx(100*1024))
 }
+// BenchmarkInsertChain_valueTx_100kB_diskdb 基准测试插入带有100kB交易的链条到磁盘数据库
 func BenchmarkInsertChain_valueTx_100kB_diskdb(b *testing.B) {
 	benchInsertChain(b, true, genValueTx(100*1024))
 }
+// BenchmarkInsertChain_uncles_memdb 基准测试插入带有叔块的链条到内存数据库
 func BenchmarkInsertChain_uncles_memdb(b *testing.B) {
 	benchInsertChain(b, false, genUncles)
 }
+// BenchmarkInsertChain_uncles_diskdb 基准测试插入带有叔块的链条到磁盘数据库
 func BenchmarkInsertChain_uncles_diskdb(b *testing.B) {
 	benchInsertChain(b, true, genUncles)
 }
+// BenchmarkInsertChain_ring200_memdb 基准测试插入带有200个环形交易的链条到内存数据库
 func BenchmarkInsertChain_ring200_memdb(b *testing.B) {
 	benchInsertChain(b, false, genTxRing(200))
 }
+// BenchmarkInsertChain_ring200_diskdb 基准测试插入带有200个环形交易的链条到磁盘数据库
 func BenchmarkInsertChain_ring200_diskdb(b *testing.B) {
 	benchInsertChain(b, true, genTxRing(200))
 }
+// BenchmarkInsertChain_ring1000_memdb 基准测试插入带有1000个环形交易的链条到内存数据库
 func BenchmarkInsertChain_ring1000_memdb(b *testing.B) {
 	benchInsertChain(b, false, genTxRing(1000))
 }
+// BenchmarkInsertChain_ring1000_diskdb 基准测试插入带有1000个环形交易的链条到磁盘数据库
 func BenchmarkInsertChain_ring1000_diskdb(b *testing.B) {
 	benchInsertChain(b, true, genTxRing(1000))
 }
@@ -80,13 +92,14 @@ var (
 // genValueTx returns a block generator that includes a single
 // value-transfer transaction with n bytes of extra data in each
 // block.
+// genValueTx 返回一个块生成器，该生成器在每个块中包含一个带有n字节额外数据的值传输交易。
 func genValueTx(nbytes int) func(int, *BlockGen) {
-	// We can reuse the data for all transactions.
-	// During signing, the method tx.WithSignature(s, sig)
-	// performs:
+	// 我们可以重用所有交易的数据。
+	// 在签名期间，方法 tx.WithSignature(s, sig)
+	// 执行：
 	// 	cpy := tx.inner.copy()
 	//	cpy.setSignatureValues(signer.ChainID(), v, r, s)
-	// After this operation, the data can be reused by the caller.
+	// 完成此操作后，调用者可以重用数据。
 	data := make([]byte, nbytes)
 	return func(i int, gen *BlockGen) {
 		toaddr := common.Address{}
@@ -125,6 +138,7 @@ func init() {
 // genTxRing returns a block generator that sends ether in a ring
 // among n accounts. This is creates n entries in the state database
 // and fills the blocks with many small transactions.
+// genTxRing 返回一个块生成器，该生成器在n个账户之间以环形发送以太币。这会在状态数据库中创建n个条目，并用许多小交易填充块。
 func genTxRing(naccounts int) func(int, *BlockGen) {
 	from := 0
 	availableFunds := new(big.Int).Set(benchRootFunds)
@@ -166,6 +180,7 @@ func genTxRing(naccounts int) func(int, *BlockGen) {
 }
 
 // genUncles generates blocks with two uncle headers.
+// genUncles 生成带有两个叔块头的块。
 func genUncles(i int, gen *BlockGen) {
 	if i >= 7 {
 		b2 := gen.PrevBlock(i - 6).Header()
@@ -177,35 +192,35 @@ func genUncles(i int, gen *BlockGen) {
 	}
 }
 
+// benchInsertChain 基准测试插入链条到数据库中。
 func benchInsertChain(b *testing.B, disk bool, gen func(int, *BlockGen)) {
-	// Create the database in memory or in a temporary directory.
+	// 创建内存中的数据库或临时目录中的数据库。
 	var db ethdb.Database
 	if !disk {
 		db = rawdb.NewMemoryDatabase()
 	} else {
 		pdb, err := pebble.New(b.TempDir(), 128, 128, "", false)
 		if err != nil {
-			b.Fatalf("cannot create temporary database: %v", err)
+			b.Fatalf("无法创建临时数据库: %v", err)
 		}
 		db = rawdb.NewDatabase(pdb)
 		defer db.Close()
 	}
-	// Generate a chain of b.N blocks using the supplied block
-	// generator function.
+	// 使用提供的块生成器函数生成 b.N 个块的链。
 	gspec := &Genesis{
 		Config: params.TestChainConfig,
 		Alloc:  types.GenesisAlloc{benchRootAddr: {Balance: benchRootFunds}},
 	}
 	_, chain, _ := GenerateChainWithGenesis(gspec, ethash.NewFaker(), b.N, gen)
 
-	// Time the insertion of the new chain.
-	// State and blocks are stored in the same DB.
+	// 计时插入新链。
+	// 状态和块存储在同一个数据库中。
 	chainman, _ := NewBlockChain(db, nil, gspec, nil, ethash.NewFaker(), vm.Config{}, nil, nil)
 	defer chainman.Stop()
 	b.ReportAllocs()
 	b.ResetTimer()
 	if i, err := chainman.InsertChain(chain); err != nil {
-		b.Fatalf("insert error (block %d): %v\n", i, err)
+		b.Fatalf("插入错误 (块 %d): %v\n", i, err)
 	}
 }
 

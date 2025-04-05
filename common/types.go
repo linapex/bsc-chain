@@ -1,18 +1,16 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权 2015 The go-ethereum Authors
+// 本文件是go-ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum库是自由软件：您可以自由地重新分发和/或修改
+// 本软件，遵循由自由软件基金会发布的GNU Lesser General Public License条款，
+// 可以是该许可证的第3版，或（根据您的选择）任何后续版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库的发布是希望它能有用，
+// 但没有任何担保；甚至没有适销性或特定用途适用性的隐含担保。
+// 详情请参阅GNU Lesser General Public License。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到一份GNU Lesser General Public License的副本
+// 如果没有，请参阅<http://www.gnu.org/licenses/>。
 
 package common
 
@@ -33,11 +31,11 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-// Lengths of hashes and addresses in bytes.
+// 哈希和地址的字节长度。
 const (
-	// HashLength is the expected length of the hash
+	// HashLength 是哈希的预期长度
 	HashLength = 32
-	// AddressLength is the expected length of the address
+	// AddressLength 是地址的预期长度
 	AddressLength = 20
 )
 
@@ -45,60 +43,58 @@ var (
 	hashT    = reflect.TypeOf(Hash{})
 	addressT = reflect.TypeOf(Address{})
 
-	// MaxAddress represents the maximum possible address value.
+	// MaxAddress 表示可能的最大地址值
 	MaxAddress = HexToAddress("0xffffffffffffffffffffffffffffffffffffffff")
 
-	// MaxHash represents the maximum possible hash value.
+	// MaxHash 表示可能的最大哈希值
 	MaxHash = HexToHash("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 )
 
-// Hash represents the 32 byte Keccak256 hash of arbitrary data.
+// Hash 表示任意数据的32字节Keccak256哈希
 type Hash [HashLength]byte
 
-// BytesToHash sets b to hash.
-// If b is larger than len(h), b will be cropped from the left.
+// BytesToHash 将字节数组b转换为哈希
+// 如果b的长度大于哈希长度，将从左侧截断
 func BytesToHash(b []byte) Hash {
 	var h Hash
 	h.SetBytes(b)
 	return h
 }
 
-// BigToHash sets byte representation of b to hash.
-// If b is larger than len(h), b will be cropped from the left.
+// BigToHash 将大整数b的字节表示转换为哈希
+// 如果b的长度大于哈希长度，将从左侧截断
 func BigToHash(b *big.Int) Hash { return BytesToHash(b.Bytes()) }
 
-// HexToHash sets byte representation of s to hash.
-// If b is larger than len(h), b will be cropped from the left.
+// HexToHash 将十六进制字符串s转换为哈希
+// 如果s的长度大于哈希长度，将从左侧截断
 func HexToHash(s string) Hash { return BytesToHash(FromHex(s)) }
 
-// Cmp compares two hashes.
+// Cmp 比较两个哈希值
 func (h Hash) Cmp(other Hash) int {
 	return bytes.Compare(h[:], other[:])
 }
 
-// Bytes gets the byte representation of the underlying hash.
+// Bytes 获取哈希的底层字节表示
 func (h Hash) Bytes() []byte { return h[:] }
 
-// Big converts a hash to a big integer.
+// Big 将哈希转换为大整数
 func (h Hash) Big() *big.Int { return new(big.Int).SetBytes(h[:]) }
 
-// Hex converts a hash to a hex string.
+// Hex 将哈希转换为十六进制字符串
 func (h Hash) Hex() string { return hexutil.Encode(h[:]) }
 
-// TerminalString implements log.TerminalStringer, formatting a string for console
-// output during logging.
+// TerminalString 实现了log.TerminalStringer接口，为日志记录时的控制台输出格式化字符串
 func (h Hash) TerminalString() string {
 	return fmt.Sprintf("%x..%x", h[:3], h[29:])
 }
 
-// String implements the stringer interface and is used also by the logger when
-// doing full logging into a file.
+// String 实现了stringer接口，在完整日志记录到文件时也会被日志记录器使用
 func (h Hash) String() string {
 	return h.Hex()
 }
 
-// Format implements fmt.Formatter.
-// Hash supports the %v, %s, %q, %x, %X and %d format verbs.
+// Format 实现了fmt.Formatter接口
+// Hash支持%v、%s、%q、%x、%X和%d格式动词
 func (h Hash) Format(s fmt.State, c rune) {
 	hexb := make([]byte, 2+len(h)*2)
 	copy(hexb, "0x")
@@ -127,23 +123,23 @@ func (h Hash) Format(s fmt.State, c rune) {
 	}
 }
 
-// UnmarshalText parses a hash in hex syntax.
+// UnmarshalText 解析十六进制格式的哈希
 func (h *Hash) UnmarshalText(input []byte) error {
 	return hexutil.UnmarshalFixedText("Hash", input, h[:])
 }
 
-// UnmarshalJSON parses a hash in hex syntax.
+// UnmarshalJSON 解析十六进制格式的哈希
 func (h *Hash) UnmarshalJSON(input []byte) error {
 	return hexutil.UnmarshalFixedJSON(hashT, input, h[:])
 }
 
-// MarshalText returns the hex representation of h.
+// MarshalText 返回哈希h的十六进制表示
 func (h Hash) MarshalText() ([]byte, error) {
 	return hexutil.Bytes(h[:]).MarshalText()
 }
 
-// SetBytes sets the hash to the value of b.
-// If b is larger than len(h), b will be cropped from the left.
+// SetBytes 将哈希设置为b的值
+// 如果b的长度大于哈希长度，将从左侧截断
 func (h *Hash) SetBytes(b []byte) {
 	if len(b) > len(h) {
 		b = b[len(b)-HashLength:]
@@ -152,7 +148,7 @@ func (h *Hash) SetBytes(b []byte) {
 	copy(h[HashLength-len(b):], b)
 }
 
-// Generate implements testing/quick.Generator.
+// Generate 实现了testing/quick.Generator接口
 func (h Hash) Generate(rand *rand.Rand, size int) reflect.Value {
 	m := rand.Intn(len(h))
 	for i := len(h) - 1; i > m; i-- {
@@ -161,7 +157,7 @@ func (h Hash) Generate(rand *rand.Rand, size int) reflect.Value {
 	return reflect.ValueOf(h)
 }
 
-// Scan implements Scanner for database/sql.
+// Scan 实现了database/sql.Scanner接口
 func (h *Hash) Scan(src interface{}) error {
 	srcB, ok := src.([]byte)
 	if !ok {
@@ -174,15 +170,15 @@ func (h *Hash) Scan(src interface{}) error {
 	return nil
 }
 
-// Value implements valuer for database/sql.
+// Value 实现了database/sql/driver.Valuer接口
 func (h Hash) Value() (driver.Value, error) {
 	return h[:], nil
 }
 
-// ImplementsGraphQLType returns true if Hash implements the specified GraphQL type.
+// ImplementsGraphQLType 如果Hash实现了指定的GraphQL类型则返回true
 func (Hash) ImplementsGraphQLType(name string) bool { return name == "Bytes32" }
 
-// UnmarshalGraphQL unmarshals the provided GraphQL query data.
+// UnmarshalGraphQL 解析提供的GraphQL查询数据
 func (h *Hash) UnmarshalGraphQL(input interface{}) error {
 	var err error
 	switch input := input.(type) {
@@ -328,17 +324,17 @@ func (a Address) MarshalText() ([]byte, error) {
 	return hexutil.Bytes(a[:]).MarshalText()
 }
 
-// UnmarshalText parses a hash in hex syntax.
+// UnmarshalText 解析十六进制格式的哈希
 func (a *Address) UnmarshalText(input []byte) error {
 	return hexutil.UnmarshalFixedText("Address", input, a[:])
 }
 
-// UnmarshalJSON parses a hash in hex syntax.
+// UnmarshalJSON 解析十六进制格式的哈希
 func (a *Address) UnmarshalJSON(input []byte) error {
 	return hexutil.UnmarshalFixedJSON(addressT, input, a[:])
 }
 
-// Scan implements Scanner for database/sql.
+// Scan 实现了database/sql.Scanner接口
 func (a *Address) Scan(src interface{}) error {
 	srcB, ok := src.([]byte)
 	if !ok {
@@ -351,15 +347,15 @@ func (a *Address) Scan(src interface{}) error {
 	return nil
 }
 
-// Value implements valuer for database/sql.
+// Value 实现了database/sql/driver.Valuer接口
 func (a Address) Value() (driver.Value, error) {
 	return a[:], nil
 }
 
-// ImplementsGraphQLType returns true if Hash implements the specified GraphQL type.
+// ImplementsGraphQLType 如果Hash实现了指定的GraphQL类型则返回true
 func (a Address) ImplementsGraphQLType(name string) bool { return name == "Address" }
 
-// UnmarshalGraphQL unmarshals the provided GraphQL query data.
+// UnmarshalGraphQL 解析提供的GraphQL查询数据
 func (a *Address) UnmarshalGraphQL(input interface{}) error {
 	var err error
 	switch input := input.(type) {
@@ -463,7 +459,7 @@ func isString(input []byte) bool {
 	return len(input) >= 2 && input[0] == '"' && input[len(input)-1] == '"'
 }
 
-// UnmarshalJSON parses a hash in hex syntax.
+// UnmarshalJSON 解析十六进制格式的哈希
 func (d *Decimal) UnmarshalJSON(input []byte) error {
 	if !isString(input) {
 		return &json.UnmarshalTypeError{Value: "non-string", Type: reflect.TypeOf(uint64(0))}
@@ -478,8 +474,7 @@ func (d *Decimal) UnmarshalJSON(input []byte) error {
 
 type PrettyBytes []byte
 
-// TerminalString implements log.TerminalStringer, formatting a string for console
-// output during logging.
+// TerminalString 实现了log.TerminalStringer接口，为日志记录时的控制台输出格式化字符串
 func (b PrettyBytes) TerminalString() string {
 	if len(b) < 7 {
 		return fmt.Sprintf("%x", b)

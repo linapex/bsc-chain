@@ -1,20 +1,17 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权所有 2014 go-ethereum 作者
+// 本文件是 go-ethereum 库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum 库是自由软件：您可以根据 GNU 较宽松通用公共许可证的条款重新分发和/或修改它，
+// 该许可证由自由软件基金会发布，版本 3 或（根据您的选择）任何更高版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum 库的发布是希望它能有用，
+// 但没有任何保证；甚至没有适销性或特定用途适用性的暗示保证。
+// 有关更多详情，请参阅 GNU 较宽松通用公共许可证。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到一份 GNU 较宽松通用公共许可证的副本。
+// 如果没有，请参阅 <http://www.gnu.org/licenses/>。
 
-// Package common contains various helper functions.
+// common 包包含各种辅助函数。
 package common
 
 import (
@@ -24,8 +21,8 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
-// FromHex returns the bytes represented by the hexadecimal string s.
-// s may be prefixed with "0x".
+// FromHex 返回十六进制字符串s表示的字节。
+// s可以以"0x"为前缀。
 func FromHex(s string) []byte {
 	if has0xPrefix(s) {
 		s = s[2:]
@@ -36,7 +33,7 @@ func FromHex(s string) []byte {
 	return Hex2Bytes(s)
 }
 
-// CopyBytes returns an exact copy of the provided bytes.
+// CopyBytes 返回提供字节的精确副本。
 func CopyBytes(b []byte) (copiedBytes []byte) {
 	if b == nil {
 		return nil
@@ -47,17 +44,17 @@ func CopyBytes(b []byte) (copiedBytes []byte) {
 	return
 }
 
-// has0xPrefix validates str begins with '0x' or '0X'.
+// has0xPrefix 验证字符串是否以'0x'或'0X'开头。
 func has0xPrefix(str string) bool {
 	return len(str) >= 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X')
 }
 
-// isHexCharacter returns bool of c being a valid hexadecimal.
+// isHexCharacter 返回c是否是有效的十六进制字符。
 func isHexCharacter(c byte) bool {
 	return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
 }
 
-// isHex validates whether each byte is valid hexadecimal string.
+// isHex 验证每个字节是否是有效的十六进制字符串。
 func isHex(str string) bool {
 	if len(str)%2 != 0 {
 		return false
@@ -70,18 +67,18 @@ func isHex(str string) bool {
 	return true
 }
 
-// Bytes2Hex returns the hexadecimal encoding of d.
+// Bytes2Hex 返回d的十六进制编码。
 func Bytes2Hex(d []byte) string {
 	return hex.EncodeToString(d)
 }
 
-// Hex2Bytes returns the bytes represented by the hexadecimal string str.
+// Hex2Bytes 返回十六进制字符串str表示的字节。
 func Hex2Bytes(str string) []byte {
 	h, _ := hex.DecodeString(str)
 	return h
 }
 
-// Hex2BytesFixed returns bytes of a specified fixed length flen.
+// Hex2BytesFixed 返回指定固定长度flen的字节。
 func Hex2BytesFixed(str string, flen int) []byte {
 	h, _ := hex.DecodeString(str)
 	if len(h) == flen {
@@ -95,7 +92,7 @@ func Hex2BytesFixed(str string, flen int) []byte {
 	return hh
 }
 
-// ParseHexOrString tries to hexdecode b, but if the prefix is missing, it instead just returns the raw bytes
+// ParseHexOrString 尝试对b进行十六进制解码，但如果缺少前缀，则直接返回原始字节
 func ParseHexOrString(str string) ([]byte, error) {
 	b, err := hexutil.Decode(str)
 	if errors.Is(err, hexutil.ErrMissingPrefix) {
@@ -104,7 +101,7 @@ func ParseHexOrString(str string) ([]byte, error) {
 	return b, err
 }
 
-// RightPadBytes zero-pads slice to the right up to length l.
+// RightPadBytes 用零在切片右侧填充直到长度l。
 func RightPadBytes(slice []byte, l int) []byte {
 	if l <= len(slice) {
 		return slice
@@ -116,7 +113,7 @@ func RightPadBytes(slice []byte, l int) []byte {
 	return padded
 }
 
-// LeftPadBytes zero-pads slice to the left up to length l.
+// LeftPadBytes 用零在切片左侧填充直到长度l。
 func LeftPadBytes(slice []byte, l int) []byte {
 	if l <= len(slice) {
 		return slice
@@ -128,7 +125,7 @@ func LeftPadBytes(slice []byte, l int) []byte {
 	return padded
 }
 
-// TrimLeftZeroes returns a subslice of s without leading zeroes
+// TrimLeftZeroes 返回去除前导零的s的子切片
 func TrimLeftZeroes(s []byte) []byte {
 	idx := 0
 	for ; idx < len(s); idx++ {
@@ -139,7 +136,7 @@ func TrimLeftZeroes(s []byte) []byte {
 	return s[idx:]
 }
 
-// TrimRightZeroes returns a subslice of s without trailing zeroes
+// TrimRightZeroes 返回去除尾部零的s的子切片
 func TrimRightZeroes(s []byte) []byte {
 	idx := len(s)
 	for ; idx > 0; idx-- {

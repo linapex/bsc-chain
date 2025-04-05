@@ -36,10 +36,11 @@ func EnableRemoteVerifyManager(remoteValidator *remoteVerifyManager) BlockValida
 	}
 }
 
-// BlockValidator is responsible for validating block headers, uncles and
-// processed state.
-//
-// BlockValidator implements Validator.
+// BlockValidator 负责验证块头、叔块和处理后的状态。
+// BlockValidator 实现 Validator。
+// NewBlockValidator 返回一个新的块验证器，可以安全地重复使用。
+// ValidateBody 验证给定块的叔块，并验证块头的交易和叔块根。此时假定头已经验证。
+// ValidateState 验证状态转换后发生的各种变化，例如使用的气体量、收据根和状态根本身。
 type BlockValidator struct {
 	config          *params.ChainConfig // Chain configuration options
 	bc              *BlockChain         // Canonical block chain

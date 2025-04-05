@@ -1,116 +1,129 @@
-## BNB Smart Chain
+# BNB智能链
 
-The goal of BNB Smart Chain is to bring programmability and interoperability to BNB Beacon Chain. In order to embrace the existing popular community and advanced technology, it will bring huge benefits by staying compatible with all the existing smart contracts on Ethereum and Ethereum tooling. And to achieve that, the easiest solution is to develop based on go-ethereum fork, as we respect the great work of Ethereum very much.
+BNB智能链的目标是为BNB信标链带来可编程性和互操作性。为了拥抱现有的流行社区和先进技术，它将通过与以太坊上所有现有智能合约和以太坊工具保持兼容性来带来巨大的好处。为了实现这一目标，最简单的解决方案是基于go-ethereum进行开发，因为我们非常尊重以太坊的伟大工作。
 
-BNB Smart Chain starts its development based on go-ethereum fork. So you may see many toolings, binaries and also docs are based on Ethereum ones, such as the name “geth”.
+BNB智能链基于go-ethereum分支开始其开发。因此，您可能会看到许多工具、二进制文件和文档都基于以太坊的，例如名称"geth"。
 
-[![API Reference](
-https://pkg.go.dev/badge/github.com/ethereum/go-ethereum
-)](https://pkg.go.dev/github.com/ethereum/go-ethereum?tab=doc)
+[![API参考](https://pkg.go.dev/badge/github.com/ethereum/go-ethereum)](https://pkg.go.dev/github.com/ethereum/go-ethereum?tab=doc)
 [![Discord](https://img.shields.io/badge/discord-join%20chat-blue.svg)](https://discord.gg/z2VpC455eU)
 
-But from that baseline of EVM compatible, BNB Smart Chain introduces a system of 21 validators with Proof of Staked Authority (PoSA) consensus that can support short block time and lower fees. The most bonded validator candidates of staking will become validators and produce blocks. The double-sign detection and other slashing logic guarantee security, stability, and chain finality.
+但在EVM兼容的基础上，BNB智能链引入了一个由21个验证者组成的系统，采用权益证明授权(PoSA)共识机制，可以支持短区块时间和更低的费用。质押最多的验证者候选人将成为验证者并产生区块。双签检测和其他惩罚逻辑保证了安全性、稳定性和链的最终性。
 
-**The BNB Smart Chain** will be:
+## 系统架构
 
-- **A self-sovereign blockchain**: Provides security and safety with elected validators.
-- **EVM-compatible**: Supports all the existing Ethereum tooling along with faster finality and cheaper transaction fees.
-- **Distributed with on-chain governance**: Proof of Staked Authority brings in decentralization and community participants. As the native token, BNB will serve as both the gas of smart contract execution and tokens for staking.
+BNB智能链由以下核心组件构成：
 
-More details in [White Paper](https://github.com/bnb-chain/whitepaper/blob/master/WHITEPAPER.md).
+- **核心区块链引擎**：负责处理交易、区块生产和状态管理
+- **共识层**：实现PoSA共识机制，确保网络安全和交易最终性
+- **P2P网络层**：管理节点之间的通信，维护网络连接
+- **RPC接口**：提供标准化API，便于开发者与区块链交互
+- **智能合约虚拟机**：执行EVM兼容的智能合约，支持丰富的DApp生态
 
-## Key features
+## 节点类型
 
-### Proof of Staked Authority 
-Although Proof-of-Work (PoW) has been approved as a practical mechanism to implement a decentralized network, it is not friendly to the environment and also requires a large size of participants to maintain the security. 
+网络中包含三种类型的节点：
 
-Proof-of-Authority(PoA) provides some defense to 51% attack, with improved efficiency and tolerance to certain levels of Byzantine players (malicious or hacked). 
-Meanwhile, the PoA protocol is most criticized for being not as decentralized as PoW, as the validators, i.e. the nodes that take turns to produce blocks, have all the authorities and are prone to corruption and security attacks.
+- **验证者节点**：21个活跃节点，负责生产区块和验证交易
+- **全节点**：存储完整区块链数据，可独立验证所有交易
+- **轻客户端**：只下载区块头，适用于资源受限的设备
 
-Other blockchains, such as EOS and Cosmos both, introduce different types of Deputy Proof of Stake (DPoS) to allow the token holders to vote and elect the validator set. It increases the decentralization and favors community governance. 
+## 产品定位
 
-To combine DPoS and PoA for consensus, BNB Smart Chain implement a novel consensus engine called Parlia that:
+**BNB智能链**将是：
 
-1. Blocks are produced by a limited set of validators.
-2. Validators take turns to produce blocks in a PoA manner, similar to Ethereum's Clique consensus engine.
-3. Validator set are elected in and out based on a staking based governance on BNB Smart Chain.
-4. Parlia consensus engine will interact with a set of [system contracts](https://docs.bnbchain.org/bnb-smart-chain/staking/overview/#system-contracts) to achieve liveness slash, revenue distributing and validator set renewing func.
+- **自主主权区块链**：通过选举的验证者提供安全和保障。
+- **EVM兼容**：支持所有现有的以太坊工具，同时具有更快的最终性和更低的交易费用。
+- **分布式链上治理**：权益证明授权带来去中心化和社区参与。作为原生代币，BNB将同时作为智能合约执行的燃料和质押的代币。
 
-## Native Token
+更多详情请参阅[白皮书](https://github.com/bnb-chain/whitepaper/blob/master/WHITEPAPER.md)。
 
-BNB will run on BNB Smart Chain in the same way as ETH runs on Ethereum so that it remains as `native token` for BSC. This means,
-BNB will be used to:
+## 主要特点
 
-1. pay `gas` to deploy or invoke Smart Contract on BSC
+### 权益证明授权
+尽管工作量证明(PoW)已被证明是实现去中心化网络的实用机制，但它对环境不友好，并且还需要大量参与者来维护安全性。
 
-## Building the source
+权威证明(PoA)提供了对51%攻击的一些防御，提高了效率并容忍一定程度的拜占庭节点(恶意或被黑客攻击的节点)。
+同时，PoA协议最受批评的是不如PoW去中心化，因为验证者(即轮流产生区块的节点)拥有所有权限，容易受到腐败和安全攻击。
 
-Many of the below are the same as or similar to go-ethereum.
+其他区块链，如EOS和Cosmos，都引入了不同类型的委托权益证明(DPoS)，允许代币持有者投票并选举验证者集合。这增加了去中心化程度并有利于社区治理。
 
-For prerequisites and detailed build instructions please read the [Installation Instructions](https://geth.ethereum.org/docs/getting-started/installing-geth).
+为了将DPoS和PoA结合用于共识，BNB智能链实现了一种名为Parlia的新型共识引擎，它：
 
-Building `geth` requires both a Go (version 1.22 or later) and a C compiler (GCC 5 or higher). You can install
-them using your favourite package manager. Once the dependencies are installed, run
+1. 区块由有限的验证者集合产生。
+2. 验证者以PoA方式轮流产生区块，类似于以太坊的Clique共识引擎。
+3. 验证者集合基于BNB智能链上的质押治理进行选举和淘汰。
+4. Parlia共识引擎将与一组[系统合约](https://docs.bnbchain.org/bnb-smart-chain/staking/overview/#system-contracts)交互，以实现活跃度惩罚、收益分配和验证者集合更新功能。
+
+## 原生代币
+
+BNB将在BNB智能链上运行，方式与ETH在以太坊上运行相同，因此它仍然是BSC的`原生代币`。这意味着，
+BNB将用于：
+
+1. 在BSC上部署或调用智能合约时支付`燃料费`
+
+## 构建源码
+
+以下许多内容与go-ethereum相同或相似。
+
+有关先决条件和详细构建说明，请阅读[安装说明](https://geth.ethereum.org/docs/getting-started/installing-geth)。
+
+构建`geth`需要Go(1.22版本或更高)和C编译器(GCC 5或更高)。您可以使用您喜欢的包管理器安装它们。安装依赖项后，运行
 
 ```shell
 make geth
 ```
 
-or, to build the full suite of utilities:
+或者，要构建完整的工具套件：
 
 ```shell
 make all
 ```
 
-If you get such error when running the node with self built binary:
+如果在使用自行构建的二进制文件运行节点时遇到以下错误：
 ```shell
 Caught SIGILL in blst_cgo_init, consult <blst>/bindinds/go/README.md.
 ```
-please try to add the following environment variables and build again:
+请尝试添加以下环境变量并重新构建：
 ```shell
 export CGO_CFLAGS="-O -D__BLST_PORTABLE__" 
 export CGO_CFLAGS_ALLOW="-O -D__BLST_PORTABLE__"
 ```
 
-## Executables
+## 可执行文件
 
-The bsc project comes with several wrappers/executables found in the `cmd`
-directory.
+BSC项目附带了几个包装器/可执行文件，位于`cmd`目录中。
 
-|  Command   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|  命令   | 描述                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | :--------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`geth`** | Main BNB Smart Chain client binary. It is the entry point into the BSC network (main-, test- or private net), capable of running as a full node (default), archive node (retaining all historical state) or a light node (retrieving data live). It has the same and more RPC and other interface as go-ethereum and can be used by other processes as a gateway into the BSC network via JSON RPC endpoints exposed on top of HTTP, WebSocket and/or IPC transports. `geth --help` and the [CLI page](https://geth.ethereum.org/docs/interface/command-line-options) for command line options. |
-|   `clef`   | Stand-alone signing tool, which can be used as a backend signer for `geth`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-|  `devp2p`  | Utilities to interact with nodes on the networking layer, without running a full blockchain.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-|  `abigen`  | Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages. It operates on plain [Ethereum contract ABIs](https://docs.soliditylang.org/en/develop/abi-spec.html) with expanded functionality if the contract bytecode is also available. However, it also accepts Solidity source files, making development much more streamlined. Please see our [Native DApps](https://geth.ethereum.org/docs/dapp/native-bindings) page for details.                                                                                               |
-| `bootnode` | Stripped down version of our Ethereum client implementation that only takes part in the network node discovery protocol, but does not run any of the higher level application protocols. It can be used as a lightweight bootstrap node to aid in finding peers in private networks.                                                                                                                                                                                                                                                                                                            |
-|   `evm`    | Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode. Its purpose is to allow isolated, fine-grained debugging of EVM opcodes (e.g. `evm --code 60ff60ff --debug run`).                                                                                                                                                                                                                                                                                                            |
-| `rlpdump`  | Developer utility tool to convert binary RLP ([Recursive Length Prefix](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp)) dumps (data encoding used by the Ethereum protocol both network as well as consensus wise) to user-friendlier hierarchical representation (e.g. `rlpdump --hex CE0183FFFFFFC4C304050583616263`).                                                                                                                                                                                                                                                                                 |
+| **`geth`** | 主要BNB智能链客户端二进制文件。它是进入BSC网络(主网、测试网或私有网)的入口点，能够作为全节点(默认)、归档节点(保留所有历史状态)或轻节点(实时检索数据)运行。它具有与go-ethereum相同甚至更多的RPC和其他接口，可以被其他进程用作通过在HTTP、WebSocket和/或IPC传输之上公开的JSON RPC端点进入BSC网络的网关。`geth --help`和[CLI页面](https://geth.ethereum.org/docs/interface/command-line-options)提供了命令行选项。 |
+|   `clef`   | 独立签名工具，可用作`geth`的后端签名者。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|  `devp2p`  | 用于在网络层与节点交互的工具，无需运行完整的区块链。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+|  `abigen`  | 源代码生成器，用于将以太坊合约定义转换为易于使用、编译时类型安全的Go包。它可以处理普通的[以太坊合约ABI](https://docs.soliditylang.org/en/develop/abi-spec.html)，如果合约字节码也可用，则功能会扩展。但是，它也接受Solidity源文件，使开发更加流畅。请参阅我们的[原生DApps](https://geth.ethereum.org/docs/dapp/native-bindings)页面了解详情。                                                                                               |
+| `bootnode` | 我们的以太坊客户端实现的精简版本，仅参与网络节点发现协议，但不运行任何更高级别的应用协议。它可以用作轻量级引导节点，帮助在私有网络中查找对等节点。                                                                                                                                                                                                                                                                                                                                                                                                            |
+|   `evm`    | EVM(以太坊虚拟机)的开发者实用版本，能够在可配置的环境和执行模式下运行字节码片段。其目的是允许对EVM操作码进行隔离、细粒度的调试(例如`evm --code 60ff60ff --debug run`)。                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `rlpdump`  | 开发者实用工具，用于将二进制RLP([递归长度前缀](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp))转储(以太坊协议在网络和共识方面使用的数据编码)转换为更友好的层次表示(例如`rlpdump --hex CE0183FFFFFFC4C304050583616263`)。                                                                                                                                                                                                                                                                                 |
 
-## Running `geth`
+## 运行`geth`
 
-Going through all the possible command line flags is out of scope here (please consult our
-[CLI Wiki page](https://geth.ethereum.org/docs/fundamentals/command-line-options)),
-but we've enumerated a few common parameter combos to get you up to speed quickly
-on how you can run your own `geth` instance.
+详细介绍所有可能的命令行标志超出了本文范围(请参阅我们的[CLI Wiki页面](https://geth.ethereum.org/docs/fundamentals/command-line-options))，但我们列举了一些常见的参数组合，以帮助您快速了解如何运行自己的`geth`实例。
 
-### Hardware Requirements
+### 硬件要求
 
-The hardware must meet certain requirements to run a full node on mainnet:
-- VPS running recent versions of Mac OS X, Linux, or Windows.
-- IMPORTANT 3 TB(Dec 2023) of free disk space, solid-state drive(SSD), gp3, 8k IOPS, 500 MB/S throughput, read latency <1ms. (if node is started with snap sync, it will need NVMe SSD)
-- 16 cores of CPU and 64 GB of memory (RAM)
-- Suggest m5zn.6xlarge or r7iz.4xlarge instance type on AWS, c2-standard-16 on Google cloud.
-- A broadband Internet connection with upload/download speeds of 5 MB/S
+在主网上运行全节点的硬件必须满足某些要求：
+- 运行最新版本的Mac OS X、Linux或Windows的VPS。
+- 重要：3 TB(2023年12月)的可用磁盘空间，固态硬盘(SSD)，gp3，8k IOPS，500 MB/S吞吐量，读取延迟<1ms。(如果节点以快照同步方式启动，则需要NVMe SSD)
+- 16核CPU和64 GB内存(RAM)
+- 建议在AWS上使用m5zn.6xlarge或r7iz.4xlarge实例类型，在Google云上使用c2-standard-16。
+- 具有5 MB/S上传/下载速度的宽带互联网连接
 
-The requirement for testnet:
-- VPS running recent versions of Mac OS X, Linux, or Windows.
-- 500G of storage for testnet.
-- 4 cores of CPU and 16 gigabytes of memory (RAM).
+测试网的要求：
+- 运行最新版本的Mac OS X、Linux或Windows的VPS。
+- 测试网需要500G存储空间。
+- 4核CPU和16GB内存(RAM)。
 
-### Steps to Run a Fullnode
+### 运行全节点的步骤
 
-#### 1. Download the pre-build binaries
+#### 1. 下载预构建二进制文件
 ```shell
 # Linux
 wget $(curl -s https://api.github.com/repos/bnb-chain/bsc/releases/latest |grep browser_ |grep geth_linux |cut -d\" -f4)
@@ -123,133 +136,107 @@ mv geth_macos geth
 chmod -v u+x geth
 ```
 
-#### 2. Download the config files
+#### 2. 下载配置文件
 ```shell
-//== mainnet
+//== 主网
 wget $(curl -s https://api.github.com/repos/bnb-chain/bsc/releases/latest |grep browser_ |grep mainnet |cut -d\" -f4)
 unzip mainnet.zip
 
-//== testnet
+//== 测试网
 wget $(curl -s https://api.github.com/repos/bnb-chain/bsc/releases/latest |grep browser_ |grep testnet |cut -d\" -f4)
 unzip testnet.zip
 ```
 
-#### 3. Download snapshot
-Download latest chaindata snapshot from [here](https://github.com/bnb-chain/bsc-snapshots). Follow the guide to structure your files.
+#### 3. 下载快照
+从[这里](https://github.com/bnb-chain/bsc-snapshots)下载最新的链数据快照。按照指南组织您的文件。
 
-#### 4. Start a full node
+#### 4. 启动全节点
 ```shell
-## It will run with Path-Base Storage Scheme by default and enable inline state prune, keeping the latest 90000 blocks' history state.
+## 默认情况下将使用基于路径的存储方案运行，并启用内联状态修剪，保留最新90000个区块的历史状态。
 ./geth --config ./config.toml --datadir ./node  --cache 8000 --rpc.allow-unprotected-txs --history.transactions 0
 
-## It is recommend to run fullnode with `--tries-verify-mode none` if you want high performance and care little about state consistency.
+## 如果您希望获得高性能并且不太关心状态一致性，建议使用`--tries-verify-mode none`运行全节点。
 ./geth --config ./config.toml --datadir ./node  --cache 8000 --rpc.allow-unprotected-txs --history.transactions 0 --tries-verify-mode none
 ```
 
-#### 5. Monitor node status
+#### 5. 监控节点状态
 
-Monitor the log from **./node/bsc.log** by default. When the node has started syncing, should be able to see the following output:
+默认情况下，从**./node/bsc.log**监控日志。当节点开始同步时，应该能够看到以下输出：
 ```shell
 t=2022-09-08T13:00:27+0000 lvl=info msg="Imported new chain segment"             blocks=1    txs=177   mgas=17.317   elapsed=31.131ms    mgasps=556.259  number=21,153,429 hash=0x42e6b54ba7106387f0650defc62c9ace3160b427702dab7bd1c5abb83a32d8db dirty="0.00 B"
 t=2022-09-08T13:00:29+0000 lvl=info msg="Imported new chain segment"             blocks=1    txs=251   mgas=39.638   elapsed=68.827ms    mgasps=575.900  number=21,153,430 hash=0xa3397b273b31b013e43487689782f20c03f47525b4cd4107c1715af45a88796e dirty="0.00 B"
 t=2022-09-08T13:00:33+0000 lvl=info msg="Imported new chain segment"             blocks=1    txs=197   mgas=19.364   elapsed=34.663ms    mgasps=558.632  number=21,153,431 hash=0x0c7872b698f28cb5c36a8a3e1e315b1d31bda6109b15467a9735a12380e2ad14 dirty="0.00 B"
 ```
 
-#### 6. Interact with fullnode
-Start up `geth`'s built-in interactive [JavaScript console](https://geth.ethereum.org/docs/interface/javascript-console),
-(via the trailing `console` subcommand) through which you can interact using [`web3` methods](https://web3js.readthedocs.io/en/) 
-(note: the `web3` version bundled within `geth` is very old, and not up to date with official docs),
-as well as `geth`'s own [management APIs](https://geth.ethereum.org/docs/rpc/server).
-This tool is optional and if you leave it out you can always attach to an already running
-`geth` instance with `geth attach`.
+#### 6. 与全节点交互
+启动`geth`内置的交互式[JavaScript控制台](https://geth.ethereum.org/docs/interface/javascript-console)(通过尾部的`console`子命令)，通过它您可以使用[`web3`方法](https://web3js.readthedocs.io/en/)(注意：`geth`中捆绑的`web3`版本非常旧，与官方文档不同步)以及`geth`自己的[管理API](https://geth.ethereum.org/docs/rpc/server)进行交互。此工具是可选的，如果您不使用它，您始终可以使用`geth attach`附加到已经运行的`geth`实例。
 
-#### 7. More
+#### 7. 更多
 
-More details about [running a node](https://docs.bnbchain.org/bnb-smart-chain/developers/node_operators/full_node/) and [becoming a validator](https://docs.bnbchain.org/bnb-smart-chain/validator/create-val/)
+关于[运行节点](https://docs.bnbchain.org/bnb-smart-chain/developers/node_operators/full_node/)和[成为验证者](https://docs.bnbchain.org/bnb-smart-chain/validator/create-val/)的更多详情
 
-*Note: Although some internal protective measures prevent transactions from
-crossing over between the main network and test network, you should always
-use separate accounts for play and real money. Unless you manually move
-accounts, `geth` will by default correctly separate the two networks and will not make any
-accounts available between them.*
+*注意：尽管一些内部保护措施防止交易在主网和测试网之间交叉，但您应该始终为游戏和真实资金使用单独的账户。除非您手动移动账户，否则`geth`默认会正确分离这两个网络，不会在它们之间提供任何账户。*
 
-### Configuration
+### 配置
 
-As an alternative to passing the numerous flags to the `geth` binary, you can also pass a
-configuration file via:
+作为向`geth`二进制文件传递众多标志的替代方法，您也可以通过以下方式传递配置文件：
 
 ```shell
 $ geth --config /path/to/your_config.toml
 ```
 
-To get an idea of how the file should look like you can use the `dumpconfig` subcommand to
-export your existing configuration:
+要了解文件应该是什么样子，您可以使用`dumpconfig`子命令导出现有配置：
 
 ```shell
 $ geth --your-favourite-flags dumpconfig
 ```
 
-### Programmatically interfacing `geth` nodes
+### 以编程方式与`geth`节点交互
 
-As a developer, sooner rather than later you'll want to start interacting with `geth` and the
-BSC network via your own programs and not manually through the console. To aid
-this, `geth` has built-in support for a JSON-RPC based APIs ([standard APIs](https://ethereum.github.io/execution-apis/api-documentation/)
-and [`geth` specific APIs](https://geth.ethereum.org/docs/interacting-with-geth/rpc)).
-These can be exposed via HTTP, WebSockets and IPC (UNIX sockets on UNIX based
-platforms, and named pipes on Windows).
+作为开发者，迟早您会希望通过自己的程序而不是通过控制台手动与`geth`和BSC网络交互。为了帮助实现这一点，`geth`内置了对基于JSON-RPC的API([标准API](https://ethereum.github.io/execution-apis/api-documentation/)和[`geth`特定API](https://geth.ethereum.org/docs/interacting-with-geth/rpc))的支持。这些可以通过HTTP、WebSockets和IPC(在基于UNIX的平台上是UNIX套接字，在Windows上是命名管道)公开。
 
-The IPC interface is enabled by default and exposes all the APIs supported by `geth`,
-whereas the HTTP and WS interfaces need to manually be enabled and only expose a
-subset of APIs due to security reasons. These can be turned on/off and configured as
-you'd expect.
+IPC接口默认启用，并公开`geth`支持的所有API，而HTTP和WS接口需要手动启用，并且由于安全原因只公开API的一个子集。这些可以按照您的预期打开/关闭和配置。
 
-HTTP based JSON-RPC API options:
+基于HTTP的JSON-RPC API选项：
 
-  * `--http` Enable the HTTP-RPC server
-  * `--http.addr` HTTP-RPC server listening interface (default: `localhost`)
-  * `--http.port` HTTP-RPC server listening port (default: `8545`)
-  * `--http.api` API's offered over the HTTP-RPC interface (default: `eth,net,web3`)
-  * `--http.corsdomain` Comma separated list of domains from which to accept cross-origin requests (browser enforced)
-  * `--ws` Enable the WS-RPC server
-  * `--ws.addr` WS-RPC server listening interface (default: `localhost`)
-  * `--ws.port` WS-RPC server listening port (default: `8546`)
-  * `--ws.api` API's offered over the WS-RPC interface (default: `eth,net,web3`)
-  * `--ws.origins` Origins from which to accept WebSocket requests
-  * `--ipcdisable` Disable the IPC-RPC server
-  * `--ipcpath` Filename for IPC socket/pipe within the datadir (explicit paths escape it)
+  * `--http` 启用HTTP-RPC服务器
+  * `--http.addr` HTTP-RPC服务器监听接口(默认：`localhost`)
+  * `--http.port` HTTP-RPC服务器监听端口(默认：`8545`)
+  * `--http.api` 通过HTTP-RPC接口提供的API(默认：`eth,net,web3`)
+  * `--http.corsdomain` 接受跨源请求的域的逗号分隔列表(浏览器强制)
+  * `--ws` 启用WS-RPC服务器
+  * `--ws.addr` WS-RPC服务器监听接口(默认：`localhost`)
+  * `--ws.port` WS-RPC服务器监听端口(默认：`8546`)
+  * `--ws.api` 通过WS-RPC接口提供的API(默认：`eth,net,web3`)
+  * `--ws.origins` 接受WebSocket请求的来源
+  * `--ipcdisable` 禁用IPC-RPC服务器
+  * `--ipcpath` 数据目录内IPC套接字/管道的文件名(显式路径会转义它)
 
-You'll need to use your own programming environments' capabilities (libraries, tools, etc) to
-connect via HTTP, WS or IPC to a `geth` node configured with the above flags and you'll
-need to speak [JSON-RPC](https://www.jsonrpc.org/specification) on all transports. You
-can reuse the same connection for multiple requests!
+您需要使用自己的编程环境的功能(库、工具等)通过HTTP、WS或IPC连接到配置了上述标志的`geth`节点，并且您需要在所有传输上使用[JSON-RPC](https://www.jsonrpc.org/specification)。您可以为多个请求重用相同的连接！
 
-**Note: Please understand the security implications of opening up an HTTP/WS based
-transport before doing so! Hackers on the internet are actively trying to subvert
-BSC nodes with exposed APIs! Further, all browser tabs can access locally
-running web servers, so malicious web pages could try to subvert locally available
-APIs!**
+**注意：在打开基于HTTP/WS的传输之前，请了解其安全影响！互联网上的黑客正在积极尝试破坏具有公开API的BSC节点！此外，所有浏览器标签都可以访问本地运行的Web服务器，因此恶意网页可能会尝试破坏本地可用的API！**
 
-### Operating a private network
-- [BSC-Deploy](https://github.com/bnb-chain/node-deploy/): deploy tool for setting up BNB Smart Chain.
+### 运行私有网络
+- [BSC-Deploy](https://github.com/bnb-chain/node-deploy/)：用于设置BNB智能链的部署工具。
 
-## Running a bootnode
+## 运行引导节点
 
-Bootnodes are super-lightweight nodes that are not behind a NAT and are running just discovery protocol. When you start up a node it should log your enode, which is a public identifier that others can use to connect to your node. 
+引导节点是非常轻量级的节点，不在NAT后面，只运行发现协议。当您启动节点时，它应该记录您的enode，这是一个公共标识符，其他人可以用它连接到您的节点。
 
-First the bootnode requires a key, which can be created with the following command, which will save a key to boot.key:
+首先，引导节点需要一个密钥，可以使用以下命令创建，该命令将密钥保存到boot.key：
 
 ```
 bootnode -genkey boot.key
 ```
 
-This key can then be used to generate a bootnode as follows:
+然后可以使用此密钥生成引导节点，如下所示：
 
 ```
 bootnode -nodekey boot.key -addr :30311 -network bsc
 ```
 
-The choice of port passed to -addr is arbitrary. 
-The bootnode command returns the following logs to the terminal, confirming that it is running:
+传递给-addr的端口选择是任意的。
+引导节点命令将以下日志返回到终端，确认它正在运行：
 
 ```
 enode://3063d1c9e1b824cfbb7c7b6abafa34faec6bb4e7e06941d218d760acdd7963b274278c5c3e63914bd6d1b58504c59ec5522c56f883baceb8538674b92da48a96@127.0.0.1:0?discport=30311
@@ -260,38 +247,24 @@ INFO [08-21|12:11:30.753] New local node record                    seq=1,692,616
 INFO [09-01|02:46:26.234] New local node record                    seq=1,692,616,290,686 id=2c9af1742f8f85ce ip=34.250.32.100  udp=30311 tcp=0
 ```
 
-## Contribution
+## 贡献
 
-Thank you for considering helping out with the source code! We welcome contributions
-from anyone on the internet, and are grateful for even the smallest of fixes!
+感谢您考虑帮助改进源代码！我们欢迎来自互联网上任何人的贡献，并对即使是最小的修复也表示感谢！
 
-If you'd like to contribute to bsc, please fork, fix, commit and send a pull request
-for the maintainers to review and merge into the main code base. If you wish to submit
-more complex changes though, please check up with the core devs first on [our discord channel](https://discord.gg/bnbchain)
-to ensure those changes are in line with the general philosophy of the project and/or get
-some early feedback which can make both your efforts much lighter as well as our review
-and merge procedures quick and simple.
+如果您想为bsc做贡献，请fork、修复、提交并发送拉取请求，供维护者审查并合并到主代码库中。如果您希望提交更复杂的更改，请先在[我们的discord频道](https://discord.gg/bnbchain)上与核心开发者联系，以确保这些更改符合项目的总体理念，或者获得一些早期反馈，这可以使您的工作更轻松，以及我们的审查和合并程序更快更简单。
 
-Please make sure your contributions adhere to our coding guidelines:
+请确保您的贡献遵守我们的编码准则：
 
- * Code must adhere to the official Go [formatting](https://golang.org/doc/effective_go.html#formatting)
-   guidelines (i.e. uses [gofmt](https://golang.org/cmd/gofmt/)).
- * Code must be documented adhering to the official Go [commentary](https://golang.org/doc/effective_go.html#commentary)
-   guidelines.
- * Pull requests need to be based on and opened against the `master` branch.
- * Commit messages should be prefixed with the package(s) they modify.
-   * E.g. "eth, rpc: make trace configs optional"
+ * 代码必须遵守官方Go[格式化](https://golang.org/doc/effective_go.html#formatting)准则(即使用[gofmt](https://golang.org/cmd/gofmt/))。
+ * 代码必须按照官方Go[注释](https://golang.org/doc/effective_go.html#commentary)准则进行文档化。
+ * 拉取请求需要基于`master`分支并针对其打开。
+ * 提交消息应该以它们修改的包为前缀。
+   * 例如，"eth, rpc: make trace configs optional"
 
-Please see the [Developers' Guide](https://geth.ethereum.org/docs/developers/geth-developer/dev-guide)
-for more details on configuring your environment, managing project dependencies, and
-testing procedures.
+请参阅[开发者指南](https://geth.ethereum.org/docs/developers/geth-developer/dev-guide)了解有关配置环境、管理项目依赖项和测试程序的更多详情。
 
-## License
+## 许可证
 
-The bsc library (i.e. all code outside of the `cmd` directory) is licensed under the
-[GNU Lesser General Public License v3.0](https://www.gnu.org/licenses/lgpl-3.0.en.html),
-also included in our repository in the `COPYING.LESSER` file.
+bsc库(即`cmd`目录外的所有代码)采用[GNU较宽松通用公共许可证v3.0](https://www.gnu.org/licenses/lgpl-3.0.en.html)许可，也包含在我们的存储库中的`COPYING.LESSER`文件中。
 
-The bsc binaries (i.e. all code inside of the `cmd` directory) is licensed under the
-[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html), also
-included in our repository in the `COPYING` file.
+bsc二进制文件(即`cmd`目录内的所有代码)采用[GNU通用公共许可证v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)许可，也包含在我们的存储库中的`COPYING`文件中。

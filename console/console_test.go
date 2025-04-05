@@ -40,7 +40,7 @@ const (
 	testAddress  = "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 )
 
-// hookedPrompter implements UserPrompter to simulate use input via channels.
+// hookedPrompter 实现 UserPrompter 以通过通道模拟用户输入。
 type hookedPrompter struct {
 	scheduler chan string
 }
@@ -72,7 +72,7 @@ func (p *hookedPrompter) AppendHistory(command string)                    {}
 func (p *hookedPrompter) ClearHistory()                                   {}
 func (p *hookedPrompter) SetWordCompleter(completer prompt.WordCompleter) {}
 
-// tester is a console test environment for the console tests to operate on.
+// tester 是控制台测试环境，用于控制台测试操作。
 type tester struct {
 	workspace string
 	stack     *node.Node
@@ -82,8 +82,7 @@ type tester struct {
 	output    *bytes.Buffer
 }
 
-// newTester creates a test environment based on which the console can operate.
-// Please ensure you call Close() on the returned tester to avoid leaks.
+// newTester 创建一个基于控制台可以操作的测试环境。请确保调用返回的测试者上的 Close() 以避免泄漏。
 func newTester(t *testing.T, confOverride func(*ethconfig.Config)) *tester {
 	// Create a temporary storage for the node keys and initialize it
 	workspace := t.TempDir()
@@ -140,7 +139,7 @@ func newTester(t *testing.T, confOverride func(*ethconfig.Config)) *tester {
 	}
 }
 
-// Close cleans up any temporary data folders and held resources.
+// Close 清理任何临时数据文件夹和持有的资源。
 func (env *tester) Close(t *testing.T) {
 	if err := env.console.Stop(false); err != nil {
 		t.Errorf("failed to stop embedded console: %v", err)
@@ -151,8 +150,7 @@ func (env *tester) Close(t *testing.T) {
 	os.RemoveAll(env.workspace)
 }
 
-// Tests that the node lists the correct welcome message, notably that it contains
-// the instance name, block number, data directory and supported console modules.
+// TestWelcome 测试节点列出正确的欢迎消息，特别是它包含实例名称、块号、数据目录和支持的控制台模块。
 func TestWelcome(t *testing.T) {
 	tester := newTester(t, nil)
 	defer tester.Close(t)
@@ -180,7 +178,7 @@ func TestWelcome(t *testing.T) {
 	}
 }
 
-// Tests that JavaScript statement evaluation works as intended.
+// TestEvaluate 测试 JavaScript 语句评估是否按预期工作。
 func TestEvaluate(t *testing.T) {
 	tester := newTester(t, nil)
 	defer tester.Close(t)
@@ -191,7 +189,7 @@ func TestEvaluate(t *testing.T) {
 	}
 }
 
-// Tests that the console can be used in interactive mode.
+// TestInteractive 测试控制台是否可以在交互模式下使用。
 func TestInteractive(t *testing.T) {
 	// Create a tester and run an interactive console in the background
 	tester := newTester(t, nil)
@@ -221,8 +219,7 @@ func TestInteractive(t *testing.T) {
 	}
 }
 
-// Tests that preloaded JavaScript files have been executed before user is given
-// input.
+// TestPreload 测试预加载的 JavaScript 文件是否在用户输入之前已执行。
 func TestPreload(t *testing.T) {
 	tester := newTester(t, nil)
 	defer tester.Close(t)
@@ -233,8 +230,7 @@ func TestPreload(t *testing.T) {
 	}
 }
 
-// Tests that the JavaScript objects returned by statement executions are properly
-// pretty printed instead of just displaying "[object]".
+// TestPrettyPrint 测试 JavaScript 对象返回的语句执行是否被正确地漂亮打印，而不是仅显示 "[object]"。
 func TestPrettyPrint(t *testing.T) {
 	tester := newTester(t, nil)
 	defer tester.Close(t)
@@ -265,7 +261,7 @@ func TestPrettyPrint(t *testing.T) {
 	}
 }
 
-// Tests that the JavaScript exceptions are properly formatted and colored.
+// TestPrettyError 测试 JavaScript 异常是否正确格式化和着色。
 func TestPrettyError(t *testing.T) {
 	tester := newTester(t, nil)
 	defer tester.Close(t)
@@ -277,7 +273,7 @@ func TestPrettyError(t *testing.T) {
 	}
 }
 
-// Tests that tests if the number of indents for JS input is calculated correct.
+// TestIndenting 测试 JS 输入的缩进数量是否计算正确。
 func TestIndenting(t *testing.T) {
 	testCases := []struct {
 		input               string

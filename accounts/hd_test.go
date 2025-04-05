@@ -1,18 +1,16 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权所有 2017 The go-ethereum Authors
+// 本文件是go-ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum库是自由软件：您可以自由修改和重新发布它，
+// 在遵循GNU宽通用公共许可证（GNU Lesser General Public License）的前提下，
+// 该许可证由自由软件基金会发布，版本3或（根据您的选择）任何后续版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库的发布是希望它能够有用，
+// 但不提供任何担保；甚至没有适销性或特定用途适用性的暗示担保。
+// 更多详情请参见GNU宽通用公共许可证。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到了一份GNU宽通用公共许可证的副本。
+// 如果没有，请访问<http://www.gnu.org/licenses/>。
 
 package accounts
 
@@ -22,15 +20,15 @@ import (
 	"testing"
 )
 
-// Tests that HD derivation paths can be correctly parsed into our internal binary
-// representation.
+// 测试 HD 派生路径能否正确解析为我们的内部二进制表示。
 func TestHDPathParsing(t *testing.T) {
+	// 测试HD路径解析
 	t.Parallel()
 	tests := []struct {
 		input  string
 		output DerivationPath
 	}{
-		// Plain absolute derivation paths
+		// 普通绝对派生路径
 		{"m/44'/60'/0'/0", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0}},
 		{"m/44'/60'/0'/128", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 128}},
 		{"m/44'/60'/0'/0'", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0x80000000 + 0}},
@@ -38,14 +36,14 @@ func TestHDPathParsing(t *testing.T) {
 		{"m/2147483692/2147483708/2147483648/0", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0}},
 		{"m/2147483692/2147483708/2147483648/2147483648", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0x80000000 + 0}},
 
-		// Plain relative derivation paths
+		// 普通相对派生路径
 		{"0", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0}},
 		{"128", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 128}},
 		{"0'", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0x80000000 + 0}},
 		{"128'", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0x80000000 + 128}},
 		{"2147483648", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0x80000000 + 0}},
 
-		// Hexadecimal absolute derivation paths
+		// 十六进制绝对派生路径
 		{"m/0x2C'/0x3c'/0x00'/0x00", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0}},
 		{"m/0x2C'/0x3c'/0x00'/0x80", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 128}},
 		{"m/0x2C'/0x3c'/0x00'/0x00'", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0x80000000 + 0}},
@@ -53,23 +51,23 @@ func TestHDPathParsing(t *testing.T) {
 		{"m/0x8000002C/0x8000003c/0x80000000/0x00", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0}},
 		{"m/0x8000002C/0x8000003c/0x80000000/0x80000000", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0x80000000 + 0}},
 
-		// Hexadecimal relative derivation paths
+		// 十六进制相对派生路径
 		{"0x00", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0}},
 		{"0x80", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 128}},
 		{"0x00'", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0x80000000 + 0}},
 		{"0x80'", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0x80000000 + 128}},
 		{"0x80000000", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0x80000000 + 0}},
 
-		// Weird inputs just to ensure they work
+		// 特殊输入以确保它们能正常工作
 		{"	m  /   44			'\n/\n   60	\n\n\t'   /\n0 ' /\t\t	0", DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0}},
 
-		// Invalid derivation paths
-		{"", nil},              // Empty relative derivation path
-		{"m", nil},             // Empty absolute derivation path
-		{"m/", nil},            // Missing last derivation component
-		{"/44'/60'/0'/0", nil}, // Absolute path without m prefix, might be user error
-		{"m/2147483648'", nil}, // Overflows 32 bit integer
-		{"m/-1'", nil},         // Cannot contain negative number
+		// 无效的派生路径
+		{"", nil},              // 空相对派生路径
+		{"m", nil},             // 空绝对派生路径
+		{"m/", nil},            // 缺少最后的派生组件
+		{"/44'/60'/0'/0", nil}, // 没有m前缀的绝对路径，可能是用户错误
+		{"m/2147483648'", nil}, // 溢出32位整数
+		{"m/-1'", nil},         // 不能包含负数
 	}
 	for i, tt := range tests {
 		if path, err := ParseDerivationPath(tt.input); !reflect.DeepEqual(path, tt.output) {

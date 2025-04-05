@@ -1,18 +1,17 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权所有 2016 The go-ethereum Authors
+// 本文件是go-ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum库是自由软件：您可以自由修改和重新发布它
+// 根据GNU Lesser General Public License的条款发布，由
+// Free Software Foundation发布，可以是许可证的第3版，或
+// (根据您的选择)任何更高版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库的发布是希望它能有用的，
+// 但没有任何保证；甚至没有适销性或特定用途适用性的隐含保证。
+// 详情请参阅GNU Lesser General Public License。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到了一份GNU Lesser General Public License的副本
+// 如果没有，请参阅<http://www.gnu.org/licenses/>。
 
 package console
 
@@ -41,41 +40,39 @@ import (
 )
 
 var (
-	// u: unlock, s: signXX, sendXX, n: newAccount, i: importXX
+	// u: 解锁, s: signXX, sendXX, n: 新建账户, i: importXX
 	passwordRegexp = regexp.MustCompile(`personal.[nusi]`)
 	onlyWhitespace = regexp.MustCompile(`^\s*$`)
 	exit           = regexp.MustCompile(`^\s*exit\s*;*\s*$`)
 )
 
-// HistoryFile is the file within the data directory to store input scrollback.
+// HistoryFile 是数据目录中用于存储输入历史的文件
 const HistoryFile = "history"
 
-// DefaultPrompt is the default prompt line prefix to use for user input querying.
+// DefaultPrompt 是用于用户输入查询的默认提示行前缀
 const DefaultPrompt = "> "
 
-// Config is the collection of configurations to fine tune the behavior of the
-// JavaScript console.
+// Config 是用于微调JavaScript控制台行为的配置集合
 type Config struct {
-	DataDir  string              // Data directory to store the console history at
-	DocRoot  string              // Filesystem path from where to load JavaScript files from
-	Client   *rpc.Client         // RPC client to execute Ethereum requests through
-	Prompt   string              // Input prompt prefix string (defaults to DefaultPrompt)
-	Prompter prompt.UserPrompter // Input prompter to allow interactive user feedback (defaults to TerminalPrompter)
-	Printer  io.Writer           // Output writer to serialize any display strings to (defaults to os.Stdout)
-	Preload  []string            // Absolute paths to JavaScript files to preload
+	DataDir  string              // 存储控制台历史记录的数据目录
+	DocRoot  string              // 加载JavaScript文件的基础文件系统路径
+	Client   *rpc.Client         // 用于执行以太坊请求的RPC客户端
+	Prompt   string              // 输入提示前缀字符串(默认为DefaultPrompt)
+	Prompter prompt.UserPrompter // 允许交互式用户反馈的输入提示器(默认为TerminalPrompter)
+	Printer  io.Writer           // 序列化显示字符串的输出写入器(默认为os.Stdout)
+	Preload  []string            // 预加载的JavaScript文件的绝对路径
 }
 
-// Console is a JavaScript interpreted runtime environment. It is a fully fledged
-// JavaScript console attached to a running node via an external or in-process RPC
-// client.
+// Console 是一个JavaScript解释运行时环境。它是一个功能完整的
+// JavaScript控制台，通过外部或进程内RPC客户端连接到运行中的节点。
 type Console struct {
-	client   *rpc.Client         // RPC client to execute Ethereum requests through
-	jsre     *jsre.JSRE          // JavaScript runtime environment running the interpreter
-	prompt   string              // Input prompt prefix string
-	prompter prompt.UserPrompter // Input prompter to allow interactive user feedback
-	histPath string              // Absolute path to the console scrollback history
-	history  []string            // Scroll history maintained by the console
-	printer  io.Writer           // Output writer to serialize any display strings to
+	client   *rpc.Client         // 用于执行以太坊请求的RPC客户端
+	jsre     *jsre.JSRE          // 运行解释器的JavaScript运行时环境
+	prompt   string              // 输入提示前缀字符串
+	prompter prompt.UserPrompter // 允许交互式用户反馈的输入提示器
+	histPath string              // 控制台历史记录的绝对路径
+	history  []string            // 控制台维护的历史记录
+	printer  io.Writer           // 序列化显示字符串的输出写入器
 
 	interactiveStopped chan struct{}
 	stopInteractiveCh  chan struct{}
@@ -85,10 +82,9 @@ type Console struct {
 	stopOnce           sync.Once
 }
 
-// New initializes a JavaScript interpreted runtime environment and sets defaults
-// with the config struct.
+// New 初始化一个JavaScript解释运行时环境，并根据配置结构设置默认值。
 func New(config Config) (*Console, error) {
-	// Handle unset config values gracefully
+	// 优雅处理未设置的配置值
 	if config.Prompter == nil {
 		config.Prompter = prompt.Stdin
 	}

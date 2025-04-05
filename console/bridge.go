@@ -31,15 +31,14 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// bridge is a collection of JavaScript utility methods to bride the .js runtime
-// environment and the Go RPC connection backing the remote method calls.
+// bridge是一个JavaScript工具方法的集合，用于桥接.js运行时环境和支持远程方法调用的Go RPC连接。
 type bridge struct {
 	client   *rpc.Client         // RPC client to execute Ethereum requests through
 	prompter prompt.UserPrompter // Input prompter to allow interactive user feedback
 	printer  io.Writer           // Output writer to serialize any display strings to
 }
 
-// newBridge creates a new JavaScript wrapper around an RPC client.
+// newBridge创建一个围绕RPC客户端的新JavaScript包装器。
 func newBridge(client *rpc.Client, prompter prompt.UserPrompter, printer io.Writer) *bridge {
 	return &bridge{
 		client:   client,
@@ -48,7 +47,7 @@ func newBridge(client *rpc.Client, prompter prompt.UserPrompter, printer io.Writ
 	}
 }
 
-// Sleep will block the console for the specified number of seconds.
+// Sleep将阻塞控制台指定的秒数。
 func (b *bridge) Sleep(call jsre.Call) (goja.Value, error) {
 	if nArgs := len(call.Arguments); nArgs < 1 {
 		return nil, errors.New("usage: sleep(<number of seconds>)")
@@ -62,8 +61,7 @@ func (b *bridge) Sleep(call jsre.Call) (goja.Value, error) {
 	return call.VM.ToValue(true), nil
 }
 
-// SleepBlocks will block the console for a specified number of new blocks optionally
-// until the given timeout is reached.
+// SleepBlocks将阻塞控制台直到产生指定数量的新区块，或者达到给定的超时时间。
 func (b *bridge) SleepBlocks(call jsre.Call) (goja.Value, error) {
 	// Parse the input parameters for the sleep.
 	var (
@@ -116,7 +114,7 @@ type jsonrpcCall struct {
 	Params []interface{}
 }
 
-// Send implements the web3 provider "send" method.
+// Send实现了web3提供者的"send"方法。
 func (b *bridge) Send(call jsre.Call) (goja.Value, error) {
 	// Remarshal the request into a Go value.
 	reqVal, err := call.Argument(0).ToObject(call.VM).MarshalJSON()
@@ -204,12 +202,13 @@ func setError(resp *goja.Object, code int, msg string, data interface{}) {
 	resp.Set("error", err)
 }
 
-// isNumber returns true if input value is a JS number.
+// isNumber 如果输入值是JS数字则返回true。
 func isNumber(v goja.Value) bool {
 	k := v.ExportType().Kind()
 	return k >= reflect.Int && k <= reflect.Float64
 }
 
+// getObject 根据名称从运行时获取对象
 func getObject(vm *goja.Runtime, name string) *goja.Object {
 	v := vm.Get(name)
 	if v == nil {

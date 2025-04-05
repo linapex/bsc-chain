@@ -1,18 +1,16 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权 2015 The go-ethereum Authors
+// 本文件是go-ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum库是自由软件：您可以自由地重新分发和/或修改
+// 本软件，遵循由自由软件基金会发布的GNU Lesser General Public License条款，
+// 可以是该许可证的第3版，或（根据您的选择）任何后续版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库的发布是希望它能有用，
+// 但没有任何担保；甚至没有适销性或特定用途适用性的隐含担保。
+// 详情请参阅GNU Lesser General Public License。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到一份GNU Lesser General Public License的副本
+// 如果没有，请参阅<http://www.gnu.org/licenses/>。
 
 package common
 
@@ -37,7 +35,7 @@ func TestBytesConversion(t *testing.T) {
 	exp[31] = 5
 
 	if hash != exp {
-		t.Errorf("expected %x got %x", exp, hash)
+		t.Errorf("期望 %x 得到 %x", exp, hash)
 	}
 }
 
@@ -59,7 +57,7 @@ func TestIsHexAddress(t *testing.T) {
 
 	for _, test := range tests {
 		if result := IsHexAddress(test.str); result != test.exp {
-			t.Errorf("IsHexAddress(%s) == %v; expected %v",
+			t.Errorf("IsHexAddress(%s) == %v; 期望 %v",
 				test.str, result, test.exp)
 		}
 	}
@@ -71,10 +69,10 @@ func TestHashJsonValidation(t *testing.T) {
 		Size   int
 		Error  string
 	}{
-		{"", 62, "json: cannot unmarshal hex string without 0x prefix into Go value of type common.Hash"},
-		{"0x", 66, "hex string has length 66, want 64 for common.Hash"},
-		{"0x", 63, "json: cannot unmarshal hex string of odd length into Go value of type common.Hash"},
-		{"0x", 0, "hex string has length 0, want 64 for common.Hash"},
+		{"", 62, "json: 无法将不带0x前缀的十六进制字符串反序列化为Go值类型common.Hash"},
+		{"0x", 66, "十六进制字符串长度为66，期望64作为common.Hash"},
+		{"0x", 63, "json: 无法将奇数长度的十六进制字符串反序列化为Go值类型common.Hash"},
+		{"0x", 0, "十六进制字符串长度为0，期望64作为common.Hash"},
 		{"0x", 64, ""},
 		{"0X", 64, ""},
 	}
@@ -84,11 +82,11 @@ func TestHashJsonValidation(t *testing.T) {
 		err := json.Unmarshal([]byte(input), &v)
 		if err == nil {
 			if test.Error != "" {
-				t.Errorf("%s: error mismatch: have nil, want %q", input, test.Error)
+				t.Errorf("%s: 错误不匹配: 得到nil, 期望 %q", input, test.Error)
 			}
 		} else {
 			if err.Error() != test.Error {
-				t.Errorf("%s: error mismatch: have %q, want %q", input, err, test.Error)
+				t.Errorf("%s: 错误不匹配: 得到 %q, 期望 %q", input, err, test.Error)
 			}
 		}
 	}
@@ -112,14 +110,14 @@ func TestAddressUnmarshalJSON(t *testing.T) {
 		var v Address
 		err := json.Unmarshal([]byte(test.Input), &v)
 		if err != nil && !test.ShouldErr {
-			t.Errorf("test #%d: unexpected error: %v", i, err)
+			t.Errorf("测试 #%d: 意外的错误: %v", i, err)
 		}
 		if err == nil {
 			if test.ShouldErr {
-				t.Errorf("test #%d: expected error, got none", i)
+				t.Errorf("测试 #%d: 期望错误但未得到", i)
 			}
 			if got := new(big.Int).SetBytes(v.Bytes()); got.Cmp(test.Output) != 0 {
-				t.Errorf("test #%d: address mismatch: have %v, want %v", i, got, test.Output)
+				t.Errorf("测试 #%d: 地址不匹配: 得到 %v, 期望 %v", i, got, test.Output)
 			}
 		}
 	}
@@ -135,7 +133,7 @@ func TestAddressHexChecksum(t *testing.T) {
 		{"0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359", "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359"},
 		{"0xdbf03b407c01e7cd3cbea99509d93f8dddc8c6fb", "0xdbF03B407c01E7cD3CBea99509d93f8DDDC8C6FB"},
 		{"0xd1220a0cf47c7b9be7a2e6ba89f429762e7b9adb", "0xD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb"},
-		// Ensure that non-standard length input values are handled correctly
+		// 确保正确处理非标准长度的输入值
 		{"0xa", "0x000000000000000000000000000000000000000A"},
 		{"0x0a", "0x000000000000000000000000000000000000000A"},
 		{"0x00a", "0x000000000000000000000000000000000000000A"},
@@ -156,12 +154,10 @@ func BenchmarkAddressHex(b *testing.B) {
 	}
 }
 
-// Test checks if the customized json marshaller of MixedcaseAddress object
-// is invoked correctly. In golang the struct pointer will inherit the
-// non-pointer receiver methods, the reverse is not true. In the case of
-// MixedcaseAddress, it must define the MarshalJSON method in the object
-// but not the pointer level, so that this customized marshalled can be used
-// for both MixedcaseAddress object and pointer.
+// 测试MixedcaseAddress对象的自定义json编组器是否正确调用
+// 在Go中，结构体指针会继承非指针接收器方法，但反之不成立
+// 对于MixedcaseAddress，它必须在对象级别定义MarshalJSON方法而不是指针级别
+// 这样自定义编组器可以同时用于MixedcaseAddress对象和指针
 func TestMixedcaseAddressMarshal(t *testing.T) {
 	var (
 		output string
@@ -204,7 +200,7 @@ func TestMixedcaseAccount_Address(t *testing.T) {
 		}
 	}
 
-	// These should throw exceptions:
+	// 以下情况应该抛出异常：
 	var r2 []MixedcaseAddress
 	for _, r := range []string{
 		`["0x11111111111111111111122222222222233333"]`,     // Too short
@@ -455,13 +451,13 @@ func TestAddress_Format(t *testing.T) {
 			out:  fmt.Sprintf("%v", addr),
 			want: "0xB26f2b342AAb24BCF63ea218c6A9274D30Ab9A15",
 		},
-		// The original default formatter for byte slice
+		// 字节切片的原始默认格式化器
 		{
 			name: "printf-d",
 			out:  fmt.Sprintf("%d", addr),
 			want: "[178 111 43 52 42 171 36 188 246 62 162 24 198 169 39 77 48 171 154 21]",
 		},
-		// Invalid format char.
+		// 无效的格式字符
 		{
 			name: "printf-t",
 			out:  fmt.Sprintf("%t", addr),
@@ -540,13 +536,13 @@ func TestHash_Format(t *testing.T) {
 			out:  fmt.Sprintf("%v", hash),
 			want: "0xb26f2b342aab24bcf63ea218c6a9274d30ab9a15a218c6a9274d30ab9a151000",
 		},
-		// The original default formatter for byte slice
+		// 字节切片的原始默认格式化器
 		{
 			name: "printf-d",
 			out:  fmt.Sprintf("%d", hash),
 			want: "[178 111 43 52 42 171 36 188 246 62 162 24 198 169 39 77 48 171 154 21 162 24 198 169 39 77 48 171 154 21 16 0]",
 		},
-		// Invalid format char.
+		// 无效的格式字符
 		{
 			name: "printf-t",
 			out:  fmt.Sprintf("%t", hash),

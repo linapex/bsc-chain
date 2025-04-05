@@ -1,18 +1,16 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权 2014 The go-ethereum Authors
+// 本文件是go-ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum库是自由软件：您可以自由地重新分发和/或修改
+// 本软件，遵循由自由软件基金会发布的GNU Lesser General Public License条款，
+// 可以是该许可证的第3版，或（根据您的选择）任何后续版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库的发布是希望它能有用，
+// 但没有任何担保；甚至没有适销性或特定用途适用性的隐含担保。
+// 详情请参阅GNU Lesser General Public License。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到一份GNU Lesser General Public License的副本
+// 如果没有，请参阅<http://www.gnu.org/licenses/>。
 
 package common
 
@@ -34,7 +32,7 @@ func TestStorageSizeString(t *testing.T) {
 
 	for _, test := range tests {
 		if test.size.String() != test.str {
-			t.Errorf("%f: got %q, want %q", float64(test.size), test.size.String(), test.str)
+			t.Errorf("%f: 得到 %q, 期望 %q", float64(test.size), test.size.String(), test.str)
 		}
 	}
 }
@@ -53,7 +51,7 @@ func TestStorageSizeTerminalString(t *testing.T) {
 
 	for _, test := range tests {
 		if test.size.TerminalString() != test.str {
-			t.Errorf("%f: got %q, want %q", float64(test.size), test.size.TerminalString(), test.str)
+			t.Errorf("%f: 得到 %q, 期望 %q", float64(test.size), test.size.TerminalString(), test.str)
 		}
 	}
 }

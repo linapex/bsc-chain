@@ -1,18 +1,16 @@
-// Copyright 2022 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权所有 2022 go-ethereum 作者
+// 这个文件是 go-ethereum 库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum 库是免费软件：您可以根据
+// 自由软件基金会发布的 GNU 宽通用公共许可证的条款重新分发和/或修改它，
+// 可以选择使用版本3，或任何更新的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum 库的发布是希望它能够有用，
+// 但不提供任何保证；甚至不提供针对特定用途的适销性或适用性的暗示保证。
+// 更多详细信息，请参阅 GNU 宽通用公共许可证。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到了 GNU 宽通用公共许可证的副本
+// 和 go-ethereum 库一起。如果没有，请参阅 <http://www.gnu.org/licenses/>。
 
 package miner
 
@@ -33,8 +31,8 @@ import (
 	"github.com/ethereum/go-ethereum/rlp"
 )
 
-// BuildPayloadArgs contains the provided parameters for building payload.
-// Check engine-api specification for more details.
+// BuildPayloadArgs 包含构建payload所需的参数。
+// 更多细节请查看engine-api规范文档。
 // https://github.com/ethereum/execution-apis/blob/main/src/engine/cancun.md#payloadattributesv3
 type BuildPayloadArgs struct {
 	Parent       common.Hash           // The parent block to build payload on top
@@ -46,7 +44,7 @@ type BuildPayloadArgs struct {
 	Version      engine.PayloadVersion // Versioning byte for payload id calculation.
 }
 
-// Id computes an 8-byte identifier by hashing the components of the payload arguments.
+// Id 通过对payload参数的组件进行哈希计算来生成一个8字节的标识符。
 func (args *BuildPayloadArgs) Id() engine.PayloadID {
 	hasher := sha256.New()
 	hasher.Write(args.Parent[:])
@@ -63,11 +61,9 @@ func (args *BuildPayloadArgs) Id() engine.PayloadID {
 	return out
 }
 
-// Payload wraps the built payload(block waiting for sealing). According to the
-// engine-api specification, EL should build the initial version of the payload
-// which has an empty transaction set and then keep update it in order to maximize
-// the revenue. Therefore, the empty-block here is always available and full-block
-// will be set/updated afterwards.
+// Payload封装了构建好的payload(等待密封的区块)。根据engine-api规范，
+// EL应该先构建一个初始版本的payload(包含空交易集)，然后持续更新它以最大化收益。
+// 因此，这里空区块总是可用的，完整区块将在之后设置/更新。
 type Payload struct {
 	id            engine.PayloadID
 	empty         *types.Block
@@ -83,7 +79,7 @@ type Payload struct {
 	cond          *sync.Cond
 }
 
-// newPayload initializes the payload object.
+// newPayload 初始化payload对象。
 func newPayload(empty *types.Block, emptyRequests [][]byte, witness *stateless.Witness, id engine.PayloadID) *Payload {
 	payload := &Payload{
 		id:            id,
@@ -97,19 +93,19 @@ func newPayload(empty *types.Block, emptyRequests [][]byte, witness *stateless.W
 	return payload
 }
 
-// update updates the full-block with latest built version.
+// update 使用最新构建的版本更新完整区块。
 func (payload *Payload) update(r *newPayloadResult, elapsed time.Duration) {
 	payload.lock.Lock()
 	defer payload.lock.Unlock()
 
 	select {
 	case <-payload.stop:
-		return // reject stale update
+		return // 拒绝过期的更新
 	default:
 	}
-	// Ensure the newly provided full block has a higher transaction fee.
-	// In post-merge stage, there is no uncle reward anymore and transaction
-	// fee(apart from the mev revenue) is the only indicator for comparison.
+	// 确保新提供的完整区块具有更高的交易费用。
+	// 在合并后阶段，不再有叔块奖励，交易费用（除了MEV收入外）
+	// 是唯一的比较指标。
 	if payload.full == nil || r.fees.Cmp(payload.fullFees) > 0 {
 		payload.full = r.block
 		payload.fullFees = r.fees
@@ -130,11 +126,10 @@ func (payload *Payload) update(r *newPayloadResult, elapsed time.Duration) {
 			"elapsed", common.PrettyDuration(elapsed),
 		)
 	}
-	payload.cond.Broadcast() // fire signal for notifying full block
+	payload.cond.Broadcast() // 发送信号通知完整区块已更新
 }
 
-// Resolve returns the latest built payload and also terminates the background
-// thread for updating payload. It's safe to be called multiple times.
+// Resolve 返回最新构建的payload并终止后台更新线程。可安全多次调用。
 func (payload *Payload) Resolve() *engine.ExecutionPayloadEnvelope {
 	payload.lock.Lock()
 	defer payload.lock.Unlock()
@@ -148,20 +143,19 @@ func (payload *Payload) Resolve() *engine.ExecutionPayloadEnvelope {
 		envelope := engine.BlockToExecutableData(payload.full, payload.fullFees, payload.sidecars, payload.requests)
 		if payload.fullWitness != nil {
 			envelope.Witness = new(hexutil.Bytes)
-			*envelope.Witness, _ = rlp.EncodeToBytes(payload.fullWitness) // cannot fail
+			*envelope.Witness, _ = rlp.EncodeToBytes(payload.fullWitness) // 不会失败
 		}
 		return envelope
 	}
 	envelope := engine.BlockToExecutableData(payload.empty, big.NewInt(0), nil, payload.emptyRequests)
 	if payload.emptyWitness != nil {
 		envelope.Witness = new(hexutil.Bytes)
-		*envelope.Witness, _ = rlp.EncodeToBytes(payload.emptyWitness) // cannot fail
+		*envelope.Witness, _ = rlp.EncodeToBytes(payload.emptyWitness) // 不会失败
 	}
 	return envelope
 }
 
-// ResolveEmpty is basically identical to Resolve, but it expects empty block only.
-// It's only used in tests.
+// ResolveEmpty 基本与Resolve相同，但只期望空区块。仅用于测试。
 func (payload *Payload) ResolveEmpty() *engine.ExecutionPayloadEnvelope {
 	payload.lock.Lock()
 	defer payload.lock.Unlock()
@@ -169,13 +163,13 @@ func (payload *Payload) ResolveEmpty() *engine.ExecutionPayloadEnvelope {
 	envelope := engine.BlockToExecutableData(payload.empty, big.NewInt(0), nil, payload.emptyRequests)
 	if payload.emptyWitness != nil {
 		envelope.Witness = new(hexutil.Bytes)
-		*envelope.Witness, _ = rlp.EncodeToBytes(payload.emptyWitness) // cannot fail
+		*envelope.Witness, _ = rlp.EncodeToBytes(payload.emptyWitness) // 不会失败
 	}
 	return envelope
 }
 
-// ResolveFull is basically identical to Resolve, but it expects full block only.
-// Don't call Resolve until ResolveFull returns, otherwise it might block forever.
+// ResolveFull 基本与Resolve相同，但只期望完整区块。
+// 在ResolveFull返回前不要调用Resolve，否则可能永久阻塞。
 func (payload *Payload) ResolveFull() *engine.ExecutionPayloadEnvelope {
 	payload.lock.Lock()
 	defer payload.lock.Unlock()
@@ -186,12 +180,11 @@ func (payload *Payload) ResolveFull() *engine.ExecutionPayloadEnvelope {
 			return nil
 		default:
 		}
-		// Wait the full payload construction. Note it might block
-		// forever if Resolve is called in the meantime which
-		// terminates the background construction process.
+		// 等待完整payload的构建。注意如果同时调用了Resolve
+		// 会终止后台构建进程，这可能导致永久阻塞。
 		payload.cond.Wait()
 	}
-	// Terminate the background payload construction
+	// 终止后台payload构建
 	select {
 	case <-payload.stop:
 	default:
@@ -200,16 +193,15 @@ func (payload *Payload) ResolveFull() *engine.ExecutionPayloadEnvelope {
 	envelope := engine.BlockToExecutableData(payload.full, payload.fullFees, payload.sidecars, payload.requests)
 	if payload.fullWitness != nil {
 		envelope.Witness = new(hexutil.Bytes)
-		*envelope.Witness, _ = rlp.EncodeToBytes(payload.fullWitness) // cannot fail
+		*envelope.Witness, _ = rlp.EncodeToBytes(payload.fullWitness) // 不会失败
 	}
 	return envelope
 }
 
 // buildPayload builds the payload according to the provided parameters.
 func (w *worker) buildPayload(args *BuildPayloadArgs, witness bool) (*Payload, error) {
-	// Build the initial version with no transaction included. It should be fast
-	// enough to run. The empty payload can at least make sure there is something
-	// to deliver for not missing slot.
+	// 构建不包含任何交易的初始版本。它应该足够快可以运行。
+	// 空payload至少可以确保不会因为错过slot而无法交付。
 	emptyParams := &generateParams{
 		timestamp:   args.Timestamp,
 		forceTime:   true,
@@ -227,8 +219,7 @@ func (w *worker) buildPayload(args *BuildPayloadArgs, witness bool) (*Payload, e
 	// Construct a payload object for return.
 	payload := newPayload(empty.block, empty.requests, empty.witness, args.Id())
 
-	// Spin up a routine for updating the payload in background. This strategy
-	// can maximum the revenue for including transactions with highest fee.
+	// 启动一个后台更新payload的例程。这个策略可以最大化包含最高手续费交易的收益。
 	go func() {
 		// Setup the timer for re-building the payload. The initial clock is kept
 		// for triggering process immediately.

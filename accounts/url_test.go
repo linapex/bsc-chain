@@ -1,18 +1,15 @@
-// Copyright 2018 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权所有 2018 go-ethereum 作者
+// 本文件是 go-ethereum 库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// go-ethereum 库是自由软件：您可以根据 GNU 较宽松通用公共许可证的条款重新分发和/或修改它，
+// 该许可证由自由软件基金会发布，版本 3 或（根据您的选择）任何更高版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum 库的发布是希望它能有用，
+// 但没有任何保证；甚至没有适销性或特定用途适用性的暗示保证。
+// 有关更多详情，请参阅 GNU 较宽松通用公共许可证。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// 您应该已经收到一份 GNU 较宽松通用公共许可证的副本。
+// 如果没有，请参阅 <http://www.gnu.org/licenses/>。
 
 package accounts
 
@@ -24,18 +21,18 @@ func TestURLParsing(t *testing.T) {
 	t.Parallel()
 	url, err := parseURL("https://ethereum.org")
 	if err != nil {
-		t.Errorf("unexpected error: %v", err)
+		t.Errorf("意外错误: %v", err)
 	}
 	if url.Scheme != "https" {
-		t.Errorf("expected: %v, got: %v", "https", url.Scheme)
+		t.Errorf("预期: %v, 实际: %v", "https", url.Scheme)
 	}
 	if url.Path != "ethereum.org" {
-		t.Errorf("expected: %v, got: %v", "ethereum.org", url.Path)
+		t.Errorf("预期: %v, 实际: %v", "ethereum.org", url.Path)
 	}
 
 	for _, u := range []string{"ethereum.org", ""} {
 		if _, err = parseURL(u); err == nil {
-			t.Errorf("input %v, expected err, got: nil", u)
+			t.Errorf("输入 %v, 预期错误, 实际: nil", u)
 		}
 	}
 }
@@ -44,12 +41,12 @@ func TestURLString(t *testing.T) {
 	t.Parallel()
 	url := URL{Scheme: "https", Path: "ethereum.org"}
 	if url.String() != "https://ethereum.org" {
-		t.Errorf("expected: %v, got: %v", "https://ethereum.org", url.String())
+		t.Errorf("预期: %v, 实际: %v", "https://ethereum.org", url.String())
 	}
 
 	url = URL{Scheme: "", Path: "ethereum.org"}
 	if url.String() != "ethereum.org" {
-		t.Errorf("expected: %v, got: %v", "ethereum.org", url.String())
+		t.Errorf("预期: %v, 实际: %v", "ethereum.org", url.String())
 	}
 }
 
@@ -58,10 +55,10 @@ func TestURLMarshalJSON(t *testing.T) {
 	url := URL{Scheme: "https", Path: "ethereum.org"}
 	json, err := url.MarshalJSON()
 	if err != nil {
-		t.Errorf("unexpected error: %v", err)
+		t.Errorf("意外错误: %v", err)
 	}
 	if string(json) != "\"https://ethereum.org\"" {
-		t.Errorf("expected: %v, got: %v", "\"https://ethereum.org\"", string(json))
+		t.Errorf("预期: %v, 实际: %v", "\"https://ethereum.org\"", string(json))
 	}
 }
 
@@ -70,13 +67,13 @@ func TestURLUnmarshalJSON(t *testing.T) {
 	url := &URL{}
 	err := url.UnmarshalJSON([]byte("\"https://ethereum.org\""))
 	if err != nil {
-		t.Errorf("unexpected error: %v", err)
+		t.Errorf("意外错误: %v", err)
 	}
 	if url.Scheme != "https" {
-		t.Errorf("expected: %v, got: %v", "https", url.Scheme)
+		t.Errorf("预期: %v, 实际: %v", "https", url.Scheme)
 	}
 	if url.Path != "ethereum.org" {
-		t.Errorf("expected: %v, got: %v", "https", url.Path)
+		t.Errorf("预期: %v, 实际: %v", "https", url.Path)
 	}
 }
 
@@ -96,7 +93,7 @@ func TestURLComparison(t *testing.T) {
 	for i, tt := range tests {
 		result := tt.urlA.Cmp(tt.urlB)
 		if result != tt.expect {
-			t.Errorf("test %d: cmp mismatch: expected: %d, got: %d", i, tt.expect, result)
+			t.Errorf("测试 %d: 比较不匹配: 预期: %d, 实际: %d", i, tt.expect, result)
 		}
 	}
 }
